@@ -23,7 +23,7 @@ public class SpringConfig {
             "/js/**",
             "/error"
     };
-
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http){
         http
                 .authorizeHttpRequests(auth -> auth
