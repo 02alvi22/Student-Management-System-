@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head}"></head>
+
+<body>
+<div class="d-flex" id="wrapper">
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/layout :: sidebar}"></div>
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper">
+        <div th:replace="~{fragments/layout :: navbar}"></div>
+
+        <div class="container-fluid px-4 py-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Courses</h2>
+                <a th:href="@{/course/new}" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i> Add New
+                    Course</a>
+            </div>
+
+            <div th:if="${message}" class="alert alert-success text-center" role="alert" th:text="${message}"></div>
+
+            <div class="card mb-4">
+                <div class="card-header bg-white">
+                    <i class="bi bi-table me-1"></i> Course List
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Course Name</th>
+                                <th>Course Code</th>
+                                <th>Course Fees</th>
+                                <th>Duration</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+
+                            <!-- CHANGED: the three fake rows are gone; rows now come from the database -->
+                            <tbody>
+                            <tr th:each="course : ${courses}">
+                                <td data-label="ID" th:text="${course.id}">1</td>
+                                <td data-label="Course Name" th:text="${course.courseName}">Name</td>
+                                <td data-label="Course Code" th:text="${course.courseCode}">CODE</td>
+                                <td data-label="Course Fees" th:text="${course.fee}">0</td>
+                                <td data-label="Duration" th:text="${course.duration}">0 Months</td>
+                                <td data-label="Actions">
+                                    <a href="#" class="btn btn-sm btn-info text-white me-1" title="View"><i
+                                            class="bi bi-eye"></i></a>
+                                    <a href="#" class="btn btn-sm btn-warning text-white me-1" title="Edit"><i
+                                            class="bi bi-pencil"></i></a>
+                                </td>
+                            </tr>
+
+                            <!-- ADDED: shown when there are no courses yet -->
+                            <tr th:if="${#lists.isEmpty(courses)}">
+                                <td colspan="6" class="text-center text-muted">No courses found.</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <nav aria-label="Course pagination">
+                        <ul class="pagination justify-content-end">
+
+                            <!-- Previous -->
+                            <li class="page-item">
+                                <a class="page-link" href="/courses?page=1&amp;size=10">Previous</a>
+                            </li>
+
+                            <!-- Page numbers -->
+                            <li class="page-item">
+                                <a class="page-link" href="/courses?page=0&amp;size=10">1</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="/courses?page=1&amp;size=10">2</a>
+                            </li>
+                            <li class="page-item active">
+                                <a class="page-link" href="/courses?page=2&amp;size=10">3</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="/courses?page=3&amp;size=10">4</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="/courses?page=4&amp;size=10">5</a>
+                            </li>
+
+                            <!-- Next -->
+                            <li class="page-item">
+                                <a class="page-link" href="/courses?page=3&amp;size=10">Next</a>
+                            </li>
+
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    window.addEventListener('DOMContentLoaded', event => {
+        const sidebarToggle = document.body.querySelector('#sidebarToggle');
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', event => {
+                event.preventDefault();
+                document.body.classList.toggle('sb-sidenav-toggled');
+            });
+        }
+    });
+</script>
+</body>
+
+</html>
