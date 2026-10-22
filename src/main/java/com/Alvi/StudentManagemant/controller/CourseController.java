@@ -2,23 +2,27 @@ package com.Alvi.StudentManagemant.controller;
 
 
 import com.Alvi.StudentManagemant.dto.CourseDTO;
+import com.Alvi.StudentManagemant.exception.GlobalExceptionHandler;
 import com.Alvi.StudentManagemant.repository.CourseRepository;
 import com.Alvi.StudentManagemant.service.CourseService;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/course")
 public class CourseController {
 
-    private CourseService courseService;
+    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+
+    private final CourseService courseService;
 
     CourseController(CourseService courseService){
     this.courseService = courseService;
@@ -27,14 +31,20 @@ public class CourseController {
 
     @GetMapping("/new")
     public String showCreateCourse(Model model){
+        log.info("Get /course/new - showing create course page.");
 
         model.addAttribute("courseDto", new CourseDTO());
     return "add-course";
 }
 
     @GetMapping("/list")
-    public String listCourses(Model model) {
-        model.addAttribute("courses", courseService.getAllCourses());
+    public String listCourses(@RequestParam(defaultValue="0")int page,
+                              @RequestParam(defaultValue="3")int size,
+                              Model model) {
+
+        log.info("Get /course/new - showing course list page.");
+        Page<CourseDTO> courses = courseService.getCourses(page, size);
+        model.addAttribute("courses", courses);
         return "courses";
     }
 
@@ -43,20 +53,24 @@ public class CourseController {
                                  BindingResult bindingResult,
                                  Model model,
                                  RedirectAttributes redirectAttributes) {
+        log.info("post /course - create course request received.");
+
 
         if (bindingResult.hasErrors()) {
+            log.error("post /course - page return due to validation error.");
             return "add-course";
         }
 
         if (courseService.existsByCourseCode(courseDTO.getCourseCode())) {
+            log.error("post /course - Code must be unique.");
 
-
-        bindingResult.rejectValue("courseCode", null, "Code must be unique");
-        return "add-course";
+            bindingResult.rejectValue("courseCode", null, "Code must be unique");
+            return "add-course";
     }
 
         courseService.createCourse(courseDTO);
         redirectAttributes.addFlashAttribute("message", "Course created successfully ");
+        log.info("post /course - Course successfully created.");
 
             return "redirect:/course/list";
 

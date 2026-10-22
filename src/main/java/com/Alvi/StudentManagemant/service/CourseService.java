@@ -1,6 +1,7 @@
 package com.Alvi.StudentManagemant.service;
 
 import com.Alvi.StudentManagemant.dto.CourseDTO;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -12,4 +13,5 @@ public interface CourseService {
 
    List<CourseDTO> getAllCourses();
 
+  Page<CourseDTO> getCourses(int page, int size);
 }
