@@ -14,4 +14,10 @@ public interface CourseService {
    List<CourseDTO> getAllCourses();
 
   Page<CourseDTO> getCourses(int page, int size);
+
+    CourseDTO getCourseById(Long id);
+
+    CourseDTO updateCourse(Long id, CourseDTO courseDTO);
+    boolean existsByCourseCodeAndIdNot(String code, Long id);
 }
+
