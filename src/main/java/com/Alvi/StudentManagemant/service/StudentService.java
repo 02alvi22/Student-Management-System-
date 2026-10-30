@@ -10,5 +10,10 @@ public interface StudentService {
 
     Page<StudentDTO> getStudents(int page, int size);
 
+    StudentDTO getStudentById(Long id);                                // NEW
+
+    StudentDTO updateStudent(Long id, StudentDTO studentDTO);          // NEW
+
+    boolean existsByEmailAndIdNot(String email, Long id);              // NEW
 
 }

@@ -1,12 +1,11 @@
 package com.Alvi.StudentManagemant.service.impl;
 
 
-import com.Alvi.StudentManagemant.dto.CourseDTO;
 import com.Alvi.StudentManagemant.dto.StudentDTO;
 import com.Alvi.StudentManagemant.model.Students;
 import com.Alvi.StudentManagemant.repository.StudentRepository;
 import com.Alvi.StudentManagemant.service.StudentService;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,5 +54,40 @@ public class StudentServiceImpl implements StudentService {
 
         return studentRepository.findAll(pageRequest)
                 .map(student -> mapper.map(student, StudentDTO.class));
+    }
+
+    // ===== NEW: get one student =====
+    @Override
+    @Transactional(readOnly = true)
+    public StudentDTO getStudentById(Long id) {
+        Students student = studentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("No student found with id: " + id));
+        return mapper.map(student, StudentDTO.class);
+    }
+
+    // ===== NEW: update a student =====
+    @Override
+    public StudentDTO updateStudent(Long id, StudentDTO studentDTO) {
+        log.info("Updating student with id: {}", id);
+
+        Students student = studentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("No student found with id: " + id));
+
+        student.setFirstName(studentDTO.getFirstName());
+        student.setLastName(studentDTO.getLastName());
+        student.setEmail(studentDTO.getEmail());
+        student.setPhoneNumber(studentDTO.getPhoneNumber());
+        student.setAddress(studentDTO.getAddress());
+        student.setActive(studentDTO.isActive());
+
+        Students saved = studentRepository.save(student);
+        return mapper.map(saved, StudentDTO.class);
+    }
+
+    // ===== NEW: is this email used by a DIFFERENT student? =====
+    @Override
+    @Transactional(readOnly = true)
+    public boolean existsByEmailAndIdNot(String email, Long id) {
+        return studentRepository.existsByEmailIgnoreCaseAndIdNot(email, id);
     }
 }
